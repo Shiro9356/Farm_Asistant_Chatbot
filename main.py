@@ -7,9 +7,8 @@ import joblib
 
 # Load the models and scalers for both tasks
 with open('Models/RandomForest.pkl', 'rb') as crop_model_file:
-
     crop_model = pickle.load(crop_model_file)
-
+    
 soil_label_encoder = load('Models/soil_label_encoder.joblib')  # For encoding Soil Type
 crop_label_encoder = load('Models/crop_label_encoder.joblib')  # For encoding Crop Type
 
@@ -44,7 +43,7 @@ if option == "Crop Recommendation":
                 # Process inputs and make predictions
                 crop_data = np.array([
                     [float(N), float(P), float(K), float(temperature), float(humidity), float(pH), float(rainfall)]
-                ])               
+                ])        
                 crop_prediction = crop_model.predict(crop_data)
                 st.success(f"Recommended Crop: {crop_prediction[0]}")
             except Exception as e:
