@@ -2,9 +2,9 @@ FROM python:3.10-slim
 
 WORKDIR /Backend
 
-COPY requirement.txt .
+COPY requirements.txt .
 
-RUN pip install -r requirement.txt
+RUN pip install -r requirements.txt
 
 # Copy the rest of the application code into the container
 COPY . .

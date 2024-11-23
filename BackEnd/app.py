@@ -16,6 +16,7 @@ soil_label_encoder = joblib.load('Models/soil_label_encoder.joblib')
 crop_label_encoder = joblib.load('Models/crop_label_encoder.joblib')
 fertilizer_label_encoder = joblib.load('Models/fertilizer_encoder.joblib')
 
+# Input and Response Models
 class CropInput(BaseModel):
     nitrogen: float
     phosphorus: float
@@ -33,25 +34,29 @@ class FertilizerInput(BaseModel):
     crop_type: str
     nitrogen: float
     potassium: float
-    phosphorous: float
+    phosphorous: float  # Corrected spelling
 
-class PredictionResponse(BaseModel):
-    recommended_crop: str = None
-    recommended_fertilizer: str = None
+class CropResponse(BaseModel):
+    recommended_crop: str
 
-@app.post("/crop_recommendation/", response_model=PredictionResponse)
+class FertilizerResponse(BaseModel):
+    recommended_fertilizer: str
+
+# Endpoints
+@app.post("/crop_recommendation/", response_model=CropResponse)
 async def crop_recommendation(data: CropInput):
     try:
         recommended_crop = get_crop_recommendation(data, crop_model)
-        return {"recommended_crop": recommended_crop}
+        return CropResponse(recommended_crop=recommended_crop)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error during crop recommendation: {str(e)}")
 
-@app.post("/fertilizer_recommendation/", response_model=PredictionResponse)
+@app.post("/fertilizer_recommendation/", response_model=FertilizerResponse)
 async def fertilizer_recommendation(data: FertilizerInput):
     try:
-        recommended_fertilizer = get_fertilizer_recommendation(data, fertilizer_model, soil_label_encoder, crop_label_encoder, fertilizer_label_encoder)
-        return {"recommended_fertilizer": recommended_fertilizer}
+        recommended_fertilizer = get_fertilizer_recommendation(
+            data, fertilizer_model, soil_label_encoder, crop_label_encoder, fertilizer_label_encoder
+        )
+        return FertilizerResponse(recommended_fertilizer=recommended_fertilizer)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
-
+        raise HTTPException(status_code=500, detail=f"Error during fertilizer recommendation: {str(e)}")
