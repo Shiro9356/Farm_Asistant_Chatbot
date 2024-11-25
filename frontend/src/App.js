@@ -9,17 +9,32 @@ const App = () => {
   const [userInput, setUserInput] = useState("");
   const [form, setForm] = useState(null);
 
-  const handleUserInput = (input) => {
+  const handleUserInput = async (input) => {
     const newLog = [...chatLog, { sender: "user", message: input }];
     setChatLog(newLog);
+    setUserInput("");
+
     if (input === "1") {
       setForm("crop");
     } else if (input === "2") {
       setForm("fertilizer");
     } else {
-      setChatLog([...newLog, { sender: "bot", message: "Invalid option. Please choose 1 or 2." }]);
+      // Handle free-text input using the `/generate` endpoint
+      try {
+        const response = await axios.post("http://54.253.10.129:8080/generate", {
+          user_content: input,
+        });
+        setChatLog([
+          ...newLog,
+          { sender: "bot", message: response.data.response },
+        ]);
+      } catch (error) {
+        setChatLog([
+          ...newLog,
+          { sender: "bot", message: "Sorry, I couldn't process your request. Please try again." },
+        ]);
+      }
     }
-    setUserInput("");
   };
 
   const handleSubmit = async (formData) => {
