@@ -21,7 +21,7 @@ const App = () => {
     } else {
       // Handle free-text input using the `/generate` endpoint
       try {
-        const response = await axios.post("http://54.253.10.129:8080/generate", {
+        const response = await axios.post("http://52.62.12.30:8080/generate", {
           user_content: input,
         });
         setChatLog([
@@ -40,7 +40,7 @@ const App = () => {
   const handleSubmit = async (formData) => {
     try {
       const endpoint = form === "crop" ? "/crop_recommendation/" : "/fertilizer_recommendation/";
-      const response = await axios.post(`http://54.253.10.129:8080${endpoint}`, formData);
+      const response = await axios.post(`http://52.62.12.30:8080${endpoint}`, formData);
       const resultKey = form === "crop" ? "recommended_crop" : "recommended_fertilizer";
       setChatLog([
         ...chatLog,
